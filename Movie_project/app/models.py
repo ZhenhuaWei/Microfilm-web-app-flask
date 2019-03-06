@@ -11,7 +11,7 @@ db = SQLAlchemy(app)
 
 
 # 会员数据模型
-class User(db_Model):
+class User(db.Model):
     __tablename__ = "user"
     id = db.Column(db.Integer, primary_key=True)  # 编号
     name = db.Column(db.String(100), unique=True)  # 昵称
@@ -38,3 +38,48 @@ class Userlog(db.Model):
 
     def __repr__(self):
         return "<Userlog %r>" % self.id
+
+
+# 标签
+class Tag(db.Model):
+    __tablename__ = "tag"
+    id = db.Column(db.Integer, primary_key=True)  # 编号
+    name = db.Column(db.String(100), unique=True)  # 标题
+    addtime = db.Column(db.DateTime, index=True, default=datetime.uctnow)  # 添加时间
+    movies = db.relationship("Movie", backref='tag')  # 电影外健关系关联
+
+    def __repr__(self):
+        return "<Tag %r>" % self.name
+
+
+# 电影
+class Movie(db.Model):
+    __tablename__ = "movie"
+    id = db.Column(db.Integer, primary_key=True)  # 编号
+    title = db.Column(db.String(255), unique=True)  # 标题
+    url = db.Column(db.String(255), unique=True)  # 地址
+    info = db.Column(db.Text)  # 简介
+    logo = db.Column(db.String(255), unique=True)  # 封面
+    star = db.Column(db.SmallInteger)  # 星际
+    playnum = db.Column(db.BigInteger)  # 播放量
+    commentnum = db.Column(db.BigInteger)  # 评论数
+    tag_id = db.Colum(db.Integer, db.ForeignKey("tag.id"))  # 所属标签
+    area = db.Column(db.String(255))  # 上映地区
+    release_time = db.Column(db.Date)  # 上映时间
+    length = db.Column(db.String(100))  # 播放时间
+    addtime = db.Column(db.DateTime, index=True, default=datetime.uctnow)  # 添加时间
+
+    def __repr__(self):
+        return "<Movie %r>" % self.title
+
+
+# 上映预告
+class Preview(db.Model):
+    __tablename__ = "preview"
+    id = db.Column(db.Integer, primary_key=True)  # 编号
+    title = db.Column(db.String(255), unique=True)  # 标题
+    logo = db.Column(db.String(255), unique=True)  # 封面
+    addtime = db.Column(db.DateTime, index=True, default=datetime.uctnow)  # 添加时间
+
+    def __repr__(self):
+        return "<Preview %r>" % self.title
