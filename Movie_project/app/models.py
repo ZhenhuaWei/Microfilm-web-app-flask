@@ -113,7 +113,8 @@ class Moviecol(db.Model):
     def __repr__(self):
         return "<Moviecol %r>" % self.id
 
-#权限模型
+
+# 权限模型
 class Auth(db.Model):
     __tablename__ = "auth"
     id = db.Column(db.Integer, primary_key=True)  # 编号
@@ -125,7 +126,7 @@ class Auth(db.Model):
         return "<Auth %r>" % self.name
 
 
-#角色模型
+# 角色模型
 class Role(db.Model):
     __tablename__ = "role"
     id = db.Column(db.Integer, primary_key=True)  # 编号
@@ -135,3 +136,44 @@ class Role(db.Model):
 
     def __repr__(self):
         return "<Role %r>" % self.name
+
+
+# 管理员
+class Admin(db.Model):
+    __tablename__ = "admin"
+    id = db.Column(db.Integer, primary_key=True)  # 编号
+    name = db.Column(db.String(100), unique=True)  # 名称
+    pwd = db.Column(db.String(100))  # 管理员密码
+    is_super = db.Column(db.SmallInteger)  # 是否为超级管理员，0是超级管理员
+    role_id = db.Column(db.Integer, db.ForeignKey("role.id"))  # 所属角色
+    addtime = db.Column(db.DateTime, index=True, default=datetime.uctnow)  # 添加时间
+    adminlogs = db.relationship("Adminlog", backref='admin')  # 管理员登录日志外健关系关联
+    oplogs = db.relationship("Oplog", backref='admin')  # 管理员操作日志外健关系关联
+
+    def __repr__(self):
+        return "<Admin %r>" % self.name
+
+
+# 管理员登录日志
+class Adminlog(db.Model):
+    __tablename__ = "userlog"
+    id = db.Column(db.Integer, primary_key=True)  # 编号
+    admin_id = db.Column(db.Integer, db.ForeignKey('admin.id'))  # 所属管理员
+    ip = db.Column(db.String(100))  # 登录ip
+    addtime = db.Column(db.DateTime, index=True, default=datetime.uctnow)  # 登录时间
+
+    def __repr__(self):
+        return "<Adminlog %r>" % self.id
+
+
+# 操作日志
+class Oplog(db.Model):
+    __tablename__ = "oplog"
+    id = db.Column(db.Integer, primary_key=True)  # 编号
+    admin_id = db.Column(db.Integer, db.ForeignKey('admin.id'))  # 所属管理员
+    ip = db.Column(db.String(100))  # 登录ip
+    reason = db.Column(db.String(600))  # 操作原因
+    addtime = db.Column(db.DateTime, index=True, default=datetime.uctnow)  # 登录时间
+
+    def __repr__(self):
+        return "<Oplog %r>" % self.id
