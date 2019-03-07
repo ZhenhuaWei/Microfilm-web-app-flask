@@ -22,7 +22,9 @@ class User(db.Model):
     face = db.Column(db.String(255), unique=True)  # 头像
     addtime = db.Column(db.DateTime, index=True, default=datetime.utcnow)  # 注册时间
     uuid = db.Column(db.String(255), unique=True)  # 唯一标识符
-    userlogs = db.relationship("Userlog", backref='user')  # w会员日志外健关联
+    userlogs = db.relationship("Userlog", backref='user')  # 会员日志外健关联
+    comments = db.relationship("Comment", backref='user')  # 评论外健关联
+    moviecols = db.relationship("Moviecol", backref='user')  # 收藏电影外健关联
 
     def __repr_(self):
         return "<User %r>" % self.name
@@ -68,6 +70,8 @@ class Movie(db.Model):
     release_time = db.Column(db.Date)  # 上映时间
     length = db.Column(db.String(100))  # 播放时间
     addtime = db.Column(db.DateTime, index=True, default=datetime.uctnow)  # 添加时间
+    comments = db.relationship("Comment", backref='movie')  # 评论外健关联
+    moviecols = db.relationship("Moviecol", backref='movie')  # 评论外健关联
 
     def __repr__(self):
         return "<Movie %r>" % self.title
@@ -83,3 +87,26 @@ class Preview(db.Model):
 
     def __repr__(self):
         return "<Preview %r>" % self.title
+
+class Comment(db.Model):
+    __tablename__ = "comment"
+    id = db.Column(db.Integer, primary_key=True) #编号
+    content = db.Column(db.Text)   #内容
+    movie_id = db.Column(db.Integer, db.ForeignKey("movie.id"))#所属电影
+    user_id = db.Column(db.Integer, db,ForeignKey("user.id"))#所属用户
+    addtime = db.Column(db.DateTime, index=True, default=datetime.uctnow)  # 添加时间
+
+    def __repr__(self):
+        return "<Comment %r>" % self.id
+
+#电影收藏
+class Moviecol(db.Model):
+    __tablename__ = "moiecol"
+    id = db.Column(db.Integer, primary_key=True) #编号
+    content = db.Column(db.Text)   #内容
+    movie_id = db.Column(db.Integer, db.ForeignKey("movie.id"))#所属电影
+    user_id = db.Column(db.Integer, db,ForeignKey("user.id"))#所属用户
+    addtime = db.Column(db.DateTime, index=True, default=datetime.uctnow)  # 添加时间
+
+    def __repr__(self):
+        return "<Moviecol %r>" % self.id
