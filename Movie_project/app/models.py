@@ -88,25 +88,50 @@ class Preview(db.Model):
     def __repr__(self):
         return "<Preview %r>" % self.title
 
+
 class Comment(db.Model):
     __tablename__ = "comment"
-    id = db.Column(db.Integer, primary_key=True) #编号
-    content = db.Column(db.Text)   #内容
-    movie_id = db.Column(db.Integer, db.ForeignKey("movie.id"))#所属电影
-    user_id = db.Column(db.Integer, db,ForeignKey("user.id"))#所属用户
+    id = db.Column(db.Integer, primary_key=True)  # 编号
+    content = db.Column(db.Text)  # 内容
+    movie_id = db.Column(db.Integer, db.ForeignKey("movie.id"))  # 所属电影
+    user_id = db.Column(db.Integer, db, ForeignKey("user.id"))  # 所属用户
     addtime = db.Column(db.DateTime, index=True, default=datetime.uctnow)  # 添加时间
 
     def __repr__(self):
         return "<Comment %r>" % self.id
 
-#电影收藏
+
+# 电影收藏
 class Moviecol(db.Model):
     __tablename__ = "moiecol"
-    id = db.Column(db.Integer, primary_key=True) #编号
-    content = db.Column(db.Text)   #内容
-    movie_id = db.Column(db.Integer, db.ForeignKey("movie.id"))#所属电影
-    user_id = db.Column(db.Integer, db,ForeignKey("user.id"))#所属用户
+    id = db.Column(db.Integer, primary_key=True)  # 编号
+    content = db.Column(db.Text)  # 内容
+    movie_id = db.Column(db.Integer, db.ForeignKey("movie.id"))  # 所属电影
+    user_id = db.Column(db.Integer, db, ForeignKey("user.id"))  # 所属用户
     addtime = db.Column(db.DateTime, index=True, default=datetime.uctnow)  # 添加时间
 
     def __repr__(self):
         return "<Moviecol %r>" % self.id
+
+#权限模型
+class Auth(db.Model):
+    __tablename__ = "auth"
+    id = db.Column(db.Integer, primary_key=True)  # 编号
+    name = db.Column(db.String(100), unique=True)  # 名称
+    url = db.Column(db.String(255), unique=True)  # 地址
+    addtime = db.Column(db.DateTime, index=True, default=datetime.uctnow)  # 添加时间
+
+    def __repr__(self):
+        return "<Auth %r>" % self.name
+
+
+#角色模型
+class Role(db.Model):
+    __tablename__ = "role"
+    id = db.Column(db.Integer, primary_key=True)  # 编号
+    name = db.Column(db.String(100), unique=True)  # 名称
+    auths = db.Column(db.String(600))  # 角色
+    addtime = db.Column(db.DateTime, index=True, default=datetime.uctnow)  # 添加时间
+
+    def __repr__(self):
+        return "<Role %r>" % self.name
