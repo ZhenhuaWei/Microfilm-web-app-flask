@@ -200,4 +200,3 @@ if __name__ == "__main__":
         role_id = 1
     )
     db.session.add(admin)
-    db.session.commit()
