@@ -52,6 +52,7 @@ def preview_add():
 def preview_list():
     return render_template("admin/preview_list.html")
 
+
 @admin.route("/user/list")
 def user_list():
     return render_template("admin/user_list.html")
@@ -60,3 +61,8 @@ def user_list():
 @admin.route("/user/view")
 def user_view():
     return render_template("admin/user_view.html")
+
+
+@admin.route("/comment/list")
+def comment_list():
+    return render_template("admin/comment_list.html")
