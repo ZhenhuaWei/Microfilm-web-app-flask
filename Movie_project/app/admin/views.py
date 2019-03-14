@@ -31,3 +31,13 @@ def tag_add():
 @admin.route("/tag_list")
 def tag_list():
     return render_template("admin/tag_list.html")
+
+
+@admin.route("/movie_add")
+def movie_add():
+    return render_template("admin/movie_add.html")
+
+
+@admin.route("/movie_list")
+def movie_list():
+    return render_template("admin/movie_list.html")
