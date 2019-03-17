@@ -42,3 +42,10 @@ class LoginForm(FlaskForm):
         admin = Admin.query.filter_by(name=account).count()
         if admin == 0:
             raise ValidationError("账号不存在！")
+
+class TagForm(FlaskForm):
+    name=StringField(
+
+    )
+
+    pass
