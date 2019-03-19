@@ -84,6 +84,17 @@ def tag_list(page=None):
     ).paginate(page=page, per_page=10)
     return render_template("admin/tag_list.html", page_data=page_data)
 
+#标签删除
+@admin.route("/tag/del/<int:id>/", methods=["GET"])
+@admin_login_req
+def tag_del(id=None):
+    tag = Tag.query.filter_by(id=id).first_or_404()
+    db.session.delete(tag)
+    db.session.commit()
+    flash("删除标签成功！","ok")
+    return redirect(url_for("admin.tag_list", page=1))
+
+
 
 @admin.route("/movie/add")
 @admin_login_req
