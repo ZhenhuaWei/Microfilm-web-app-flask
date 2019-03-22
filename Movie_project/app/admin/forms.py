@@ -1,6 +1,6 @@
 #coding:utf8
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField, FileField
+from wtforms import StringField, PasswordField, SubmitField, FileField, TextAreaField
 from wtforms.validators import DataRequired, ValidationError
 from app.models import Admin
 
@@ -78,5 +78,21 @@ class MovieForm(FlaskForm):
     )
 
     url = FileField(
+        label="文件",
+        validators=[
+            DataRequired('请上传文件！')
+        ],
+        description="文件",
+    )
 
+    title = StringField(
+        label="简介",
+        validators=[
+            DataRequired('请输入片名！')
+        ],
+        description="简介",
+        render_kw={
+            "class":"form-control",
+            "row":10
+        }
     )
