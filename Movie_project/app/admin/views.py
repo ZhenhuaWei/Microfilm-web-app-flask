@@ -2,8 +2,8 @@
 from . import admin
 from flask import render_template, redirect, url_for, flash, session, request
 from functools import wraps
-from app.admin.forms import LoginForm, TagForm
-from app.models import Admin, Tag
+from app.admin.forms import LoginForm, TagForm, MovieForm
+from app.models import Admin, Tag, Movie
 from app import db
 
 
@@ -116,12 +116,15 @@ def tag_edit(id):
     return render_template("admin/tag_edit.html", form=form, tag=tag)
 
 
+# 添加电影
 @admin.route("/movie/add")
 @admin_login_req
 def movie_add():
-    return render_template("admin/movie_add.html")
+    form = MovieForm()
+    return render_template("admin/movie_add.html", form=form)
 
 
+# 电影列表
 @admin.route("/movie/list")
 @admin_login_req
 def movie_list():
