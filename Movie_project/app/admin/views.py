@@ -117,10 +117,29 @@ def tag_edit(id):
 
 
 # 添加电影
-@admin.route("/movie/add")
+@admin.route("/movie/add", methods=["GET", "POST"])
 @admin_login_req
 def movie_add():
     form = MovieForm()
+    if form.validate_on_submit():
+        data = form.data
+        movie = Movie(
+            title=data["title"],
+            url=url,
+            info=data[info],
+            logo=logo,
+            star=data["star"],
+            playnum=0,
+            commentnum=0,
+            tag_id=data["tag_id"],
+            area=data["area"],
+            release_time=data["release_time"],
+            length=data["length"]
+        )
+        db.session.add(movie)
+        db.session.commit()
+        flash("添加电影成功", "ok")
+        return redirect(url_for('admin.movie_add'))
     return render_template("admin/movie_add.html", form=form)
 
 
