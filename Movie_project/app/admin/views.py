@@ -4,7 +4,9 @@ from flask import render_template, redirect, url_for, flash, session, request
 from functools import wraps
 from app.admin.forms import LoginForm, TagForm, MovieForm
 from app.models import Admin, Tag, Movie
-from app import db
+from app import db, app
+from werkzeug.utils import secure_filename
+import os, uuid, datetime
 
 
 def admin_login_req(f):
@@ -15,6 +17,13 @@ def admin_login_req(f):
         return f(*args, **kwargs)
 
     return decorated_function
+
+
+# 修改文件名称
+def change_filename(filename):
+    fileinfo = os.path.splitext(filename)
+    filename = datetime.datetime.now().strftime("%Y%m%d%H%M%S") + str(uuid.uuid4().hex) + fileinfo[-1]
+    return filename
 
 
 @admin.route("/")
@@ -123,15 +132,24 @@ def movie_add():
     form = MovieForm()
     if form.validate_on_submit():
         data = form.data
+        file_url = secure_filename(form.url.data.filename)
+        file_logo = secure_filename(form.logo.data.filename)
+        if not os.path.exists(app.config["UP_DIR"]):
+            os.makedirs(app.config["UP_DIR"])
+            os.chmod(app.config["UP_DIR"],"rw")
+        url = change_filename(file_url)
+        logo = change_filename(file_logo)
+        form.url.data.save(app.config["UP_DIR"] + url)
+        form.logo.data.save(app.config["UP_DIR"] + logo)
         movie = Movie(
             title=data["title"],
             url=url,
-            info=data[info],
+            info=data["info"],
             logo=logo,
-            star=data["star"],
+            star=int(data["star"]),
             playnum=0,
             commentnum=0,
-            tag_id=data["tag_id"],
+            tag_id=int(data["tag_id"]),
             area=data["area"],
             release_time=data["release_time"],
             length=data["length"]
