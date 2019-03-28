@@ -136,7 +136,7 @@ def movie_add():
         file_logo = secure_filename(form.logo.data.filename)
         if not os.path.exists(app.config["UP_DIR"]):
             os.makedirs(app.config["UP_DIR"])
-            os.chmod(app.config["UP_DIR"],"rw")
+            os.chmod(app.config["UP_DIR"], "rw")
         url = change_filename(file_url)
         logo = change_filename(file_logo)
         form.url.data.save(app.config["UP_DIR"] + url)
@@ -162,10 +162,17 @@ def movie_add():
 
 
 # 电影列表
-@admin.route("/movie/list")
+@admin.route("/movie/list/<int:page>/", methods=["GET"])
 @admin_login_req
-def movie_list():
-    return render_template("admin/movie_list.html")
+def movie_list(page=None):
+    if page is None:
+        page = 1
+    page_data = Movie.query.join(Tag).filter(
+        Tag.id == Movie.tag_id
+    ).order_by(
+        Movie.addtime.desc()
+    ).paginate(page=page, per_page=10)
+    return render_template("admin/movie_list.html", page_data=page_data)
 
 
 @admin.route("/preview/add")
