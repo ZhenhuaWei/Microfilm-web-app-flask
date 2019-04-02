@@ -311,9 +311,9 @@ def user_list(page=None):
     return render_template("admin/user_list.html", page_data=page_data)
 
 
-@admin.route("/user/view")
+@admin.route("/user/view/<int:id>", methods=["GET"])
 @admin_login_req
-def user_view():
+def user_view(id=None):
     return render_template("admin/user_view.html")
 
 
