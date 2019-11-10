@@ -3,7 +3,7 @@ from . import admin
 from flask import render_template, redirect, url_for, flash, session, request
 from functools import wraps
 from app.admin.forms import LoginForm, TagForm, MovieForm, PreviewForm
-from app.models import Admin, Tag, Movie, Preview, User
+from app.models import Admin, Tag, Movie, Preview, User, Comment
 from app import db, app
 from werkzeug.utils import secure_filename
 import os, uuid, datetime
@@ -317,6 +317,7 @@ def user_view(id=None):
     user = User.query.get_or_404(int(id))
     return render_template("admin/user_view.html", user=user)
 
+
 # 删除会员
 @admin.route("/user/del/<int:id>", methods=["GET"])
 @admin_login_req
@@ -327,10 +328,33 @@ def user_del(id=None):
     flash("删除会员成功！", "ok")
     return redirect(url_for("admin.user_list", page=1))
 
-@admin.route("/comment/list")
+
+@admin.route("/comment/list/<int:page>/", methods=["GET"])
 @admin_login_req
-def comment_list():
-    return render_template("admin/comment_list.html")
+def comment_list(page=None):
+    if page is None:
+        page = 1
+    page_data = Comment.query.join(
+        Movie
+    ).join(
+        User
+    ).filter(
+        Movie.id == Comment.movie_id,
+        User.id == Comment.user_id,
+    ).order_by(
+        Comment.addtime.desc()
+    ).paginate(page=page, per_page=10)
+    return render_template("admin/comment_list.html", page_data=page_data)
+
+# 删除评论
+@admin.route("/comment/del/<int:id>", methods=["GET"])
+@admin_login_req
+def comment_del(id=None):
+    comment = Comment.query.get_or_404(int(id))
+    db.session.delete(comment)
+    db.session.commit()
+    flash("删除评论成功！", "ok")
+    return redirect(url_for("admin.comment_list", page=1))
 
 
 @admin.route("/moviecol/list")
