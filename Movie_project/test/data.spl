@@ -24,3 +24,17 @@ insert into moviecol(movie_id,user_id,addtime) values(8,7,now());
 insert into moviecol(movie_id,user_id,addtime) values(8,8,now());
 
 
+/* 会员登录日志 */
+ALTER TABLE userlog auto_increment=1;   /*自动递增*/
+
+inster into userlog(user_id,ip,addtime) values(1,"192.168.4.1",now());
+inster into userlog(user_id,ip,addtime) values(2,"192.168.4.2",now());
+inster into userlog(user_id,ip,addtime) values(3,"192.168.4.3",now());
+inster into userlog(user_id,ip,addtime) values(4,"192.168.4.4",now());
+inster into userlog(user_id,ip,addtime) values(5,"192.168.4.5",now());
+inster into userlog(user_id,ip,addtime) values(6,"192.168.4.6",now());
+inster into userlog(user_id,ip,addtime) values(7,"192.168.4.7",now());
+inster into userlog(user_id,ip,addtime) values(8,"192.168.4.8",now());
+inster into userlog(user_id,ip,addtime) values(9,"192.168.4.9",now());
+
+
