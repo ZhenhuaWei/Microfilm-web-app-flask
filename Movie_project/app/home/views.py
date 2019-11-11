@@ -28,10 +28,10 @@ def regist():
             name=data["name"],
             email=data["email"],
             phone=data["phone"],
-            pwd=generate_password_hash(data("pwd")),
+            pwd=generate_password_hash(data["pwd"]),
             uuid=uuid.uuid4().hex
         )
-        db.session(user)
+        db.session.add(user)
         db.session.commit()
         flash("注册成功！", "ok")
     return render_template("home/regist.html", form=form)
