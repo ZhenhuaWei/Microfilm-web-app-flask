@@ -44,7 +44,6 @@ def index():
 
 # 登录
 @admin.route("/login/", methods=["GET", "POST"])
-# @admin_login_req
 def login():
     form = LoginForm()
     if form.validate_on_submit():

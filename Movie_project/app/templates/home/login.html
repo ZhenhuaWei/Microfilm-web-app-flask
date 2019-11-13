@@ -14,7 +14,7 @@
                     {% for msg in get_flashed_messages(category_filter=["ok"]) %}
                     <p style="color:green;">{{ msg}}</p>
                     {% endfor %}
-                    <form role="form", methods="post">
+                    <form role="form", method="post">
                         <fieldset>
                             <div class="form-group">
                                 <label for="input_contact"><span class="glyphicon glyphicon-user"></span>&nbsp;{{form.name.label }}</label>
@@ -34,8 +34,8 @@
                                 <font style="color:red">{{ err }}</font>
                             </div>
                             {% endfor %}
-                            {{form.csrf_token }}
-                            {{form.submit }}
+                            {{ form.csrf_token }}
+                            {{ form.submit }}
                         </fieldset>
                     </form>
                 </div>

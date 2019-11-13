@@ -26,6 +26,10 @@ def login():
     if form.validate_on_submit():
         data = form.data
         user = User.query.filter_by(name=data["name"]).first()
+        # 需要判断用户名不存在的情况
+        # if not user.check_pwd(data["name"]):
+        #     flash("用户名错误","err")
+        #     return redirect(url_for("home.login"))
         if not user.check_pwd(data["pwd"]):
             flash("密码错误！", "err")
             return redirect(url_for("home.login"))
@@ -37,12 +41,14 @@ def login():
         )
         db.session.add(userlog)
         db.session.commit()
-        return redirect(url_for("home.user"))
+        return redirect(request.args.get("next") or url_for("home.user"))
     return render_template("home/login.html", form=form)
 
 
 @home.route("/logout/")
 def logout():
+    session.pop("user", None)
+    session.pop("user_id", None)
     return redirect(url_for("home.login"))
 
 
@@ -65,21 +71,19 @@ def regist():
     return render_template("home/regist.html", form=form)
 
 
-@home.route("/user/")
+@home.route("/user")
 @user_login_req
 def user():
-    session.pop["user",None]
-    session.pop["user_id",None]
     return render_template("home/user.html")
 
 
-@home.route("/pwd/")
+@home.route("/pwd")
 @user_login_req
 def pwd():
     return render_template("home/pwd.html")
 
 
-@home.route("/comments/")
+@home.route("/comments")
 @user_login_req
 def comments():
     return render_template("home/comments.html")
