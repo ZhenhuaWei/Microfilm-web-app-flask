@@ -90,10 +90,10 @@ class MovieForm(FlaskForm):
         description="文件",
     )
 
-    info = StringField(
+    info = TextAreaField(
         label="简介",
         validators=[
-            DataRequired('请输入片名！')
+            DataRequired('请输入简介！')
         ],
         description="简介",
         render_kw={
