@@ -1,7 +1,7 @@
 # coding:utf8
 from . import home
 from flask import render_template, redirect, url_for, flash, session, request
-from app.home.forms import RegistForm, LoginForm, UserdetailForm
+from app.home.forms import RegistForm, LoginForm, UserdetailForm, PwdForm
 from app.models import User, Userlog
 from app import db, app
 from werkzeug.security import generate_password_hash
@@ -128,10 +128,22 @@ def user():
     return render_template("home/user.html", form=form, user=user)
 
 
-@home.route("/pwd")
+@home.route("/pwd", methods=["GET", "POST"])
 @user_login_req
 def pwd():
-    return render_template("home/pwd.html")
+    form = PwdForm()
+    if form.validate_on_submit():
+        data = form.data
+        user = User.query.filter_by(name=session["user"]).first()
+        if not user.check_pwd(data["old_pwd"]):
+            flash("旧密码错误！","err")
+            return redirect(url_for("home.pwd"))
+        user.pwd = generate_password_hash(data["new_pwd"])
+        db.session.add(user)
+        db.session.commit()
+        flash("修改密码成功，请重新登录！", "ok")
+        return redirect(url_for('home.logout'))
+    return render_template("home/pwd.html", form=form)
 
 
 @home.route("/comments")
