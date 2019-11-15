@@ -104,7 +104,7 @@ def user():
         form.face.data.save(app.config["FC_DIR"] + face)
         name_count = User.query.filter_by(name=data["name"]).count()
         if data["name"] != user.name and name_count == 1:
-            flash("昵称已存在！","err")
+            flash("昵称已存在！", "err")
             return redirect(url_for("home.user"))
 
         email_count = User.query.filter_by(email=data["email"]).count()
@@ -123,7 +123,7 @@ def user():
         user.info = data["info"]
         db.session.add(user)
         db.session.commit()
-        flash("修改成功！","ok")
+        flash("修改成功！", "ok")
         return redirect(url_for("home.user"))
     return render_template("home/user.html", form=form, user=user)
 
@@ -136,7 +136,7 @@ def pwd():
         data = form.data
         user = User.query.filter_by(name=session["user"]).first()
         if not user.check_pwd(data["old_pwd"]):
-            flash("旧密码错误！","err")
+            flash("旧密码错误！", "err")
             return redirect(url_for("home.pwd"))
         user.pwd = generate_password_hash(data["new_pwd"])
         db.session.add(user)
@@ -152,10 +152,18 @@ def comments():
     return render_template("home/comments.html")
 
 
-@home.route("/loginlog/")
+# 会员登录日志
+@home.route("/loginlog/<int:page>/", methods=["GET"])
 @user_login_req
-def loginlog():
-    return render_template("home/loginlog.html")
+def loginlog(page=None):
+    if page is None:
+        page = 1
+    page_data = Userlog.query.filter_by(
+        user_id=int(session["user_id"])
+    ).order_by(
+        Userlog.addtime.desc()
+    ).paginate(page=page, per_page=10)
+    return render_template("home/loginlog.html", page_data=page_data)
 
 
 @home.route("/moviecol/")

@@ -59,7 +59,7 @@ def login():
             ip=request.remote_addr,
         )
         db.session.add(adminlog)
-        db.sessiom.commit()
+        db.session.commit()
         return redirect(request.args.get("next") or url_for("admin.index"))
     return render_template("admin/login.html", form=form)
 
