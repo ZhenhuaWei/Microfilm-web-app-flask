@@ -2,7 +2,7 @@
 from . import home
 from flask import render_template, redirect, url_for, flash, session, request
 from app.home.forms import RegistForm, LoginForm, UserdetailForm, PwdForm
-from app.models import User, Userlog, Preview
+from app.models import User, Userlog, Preview, Tag
 from app import db, app
 from werkzeug.security import generate_password_hash
 from functools import wraps
@@ -172,9 +172,23 @@ def moviecol():
     return render_template("home/moviecol.html")
 
 
-@home.route("/")  # 首页
+# 首页
+@home.route("/")
 def index():
-    return render_template("home/index.html")
+    tags = Tag.query.all()
+    tid = request.args.get("tid", 0)
+    star = request.args.get("star", 0)
+    time = request.args.get("time", 0)
+    pm = request.args.get("pm", 0)
+    cm = request.args.get("cm", 0)
+    p = dict(
+        tid=tid,
+        star=star,
+        time=time,
+        pm=pm,
+        cm=cm,
+    )
+    return render_template("home/index.html", tags=tags, p=p)
 
 
 # 上映预告
