@@ -1,8 +1,8 @@
 # coding:utf8
 from . import home
 from flask import render_template, redirect, url_for, flash, session, request
-from app.home.forms import RegistForm, LoginForm, UserdetailForm, PwdForm
-from app.models import User, Userlog, Preview, Tag, Movie
+from app.home.forms import RegistForm, LoginForm, UserdetailForm, PwdForm, CommentForm
+from app.models import User, Userlog, Preview, Tag, Movie, Comment
 from app import db, app
 from werkzeug.security import generate_password_hash
 from functools import wraps
@@ -82,7 +82,7 @@ def regist():
 
 
 # 会员修改资料
-@home.route("/user", methods=["GET", "POST"])
+@home.route("/user/", methods=["GET", "POST"])
 @user_login_req
 def user():
     form = UserdetailForm()
@@ -128,7 +128,7 @@ def user():
     return render_template("home/user.html", form=form, user=user)
 
 
-@home.route("/pwd", methods=["GET", "POST"])
+@home.route("/pwd/", methods=["GET", "POST"])
 @user_login_req
 def pwd():
     form = PwdForm()
@@ -146,10 +146,22 @@ def pwd():
     return render_template("home/pwd.html", form=form)
 
 
-@home.route("/comments")
+@home.route("/comments/<int:page>/")
 @user_login_req
-def comments():
-    return render_template("home/comments.html")
+def comments(page=None):
+    if page is None:
+        page = 1
+    page_data = Comment.query.join(
+        Movie
+    ).join(
+        User
+    ).filter(
+        Movie.id == Comment.movie_id,
+        User.id == session["user_id"]
+    ).order_by(
+        Comment.addtime.desc()
+    ).paginate(page=page, per_page=10)
+    return render_template("home/comments.html", page_data=page_data)
 
 
 # 会员登录日志
@@ -255,10 +267,42 @@ def search(page=None):
     return render_template("home/search.html", movie_count=movie_count, key=key, page_data=page_data)
 
 
-@home.route("/play/<int:id>/")
-def play(id=None):
+@home.route("/play/<int:id>/<int:page>/", methods=["GET", "POST"])
+def play(id=None, page=None):
     movie = Movie.query.join(Tag).filter(
         Tag.id == Movie.tag_id,
         Movie.id == int(id)
     ).first_or_404()
-    return render_template("home/play.html", movie=movie)
+
+    if page is None:
+        page = 1
+    page_data = Comment.query.join(
+        Movie
+    ).join(
+        User
+    ).filter(
+        Movie.id == movie.id,
+        User.id == Comment.user_id
+    ).order_by(
+        Comment.addtime.desc()
+    ).paginate(page=page, per_page=10)
+
+    movie.playnum = movie.playnum + 1
+    form = CommentForm()
+    if "user" in session and form.validate_on_submit():
+        data = form.data
+        comment = Comment(
+            content=data["content"],
+            movie_id=movie.id,
+            user_id=session["user_id"]
+        )
+        db.session.add(comment)
+        db.session.commit()
+        movie.commentnum = movie.commentnum + 1
+        db.session.add(movie)
+        db.session.commit()
+        flash("添加评论成功！")
+        return redirect(url_for("home.play", id=movie.id, page=1))
+    db.session.add(movie)
+    db.session.commit()
+    return render_template("home/play.html", movie=movie, form=form, page_data=page_data)
