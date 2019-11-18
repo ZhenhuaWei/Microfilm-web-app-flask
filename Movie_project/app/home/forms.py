@@ -221,7 +221,7 @@ class CommentForm(FlaskForm):
     content = TextAreaField(
         label="内容",
         validators=[
-            DataRequired("请输入内容！"),
+            DataRequired("请输入内容！")
         ],
         description="内容",
         render_kw={
