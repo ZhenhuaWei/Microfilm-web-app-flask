@@ -24,11 +24,17 @@
                 {% for v in page_data.items %}
                     <li class="item cl">
                         <a>
-                            <!--need to modify to show face, now use default none face-->
+                            {% if v.user.face %}
                             <i class="avatar size-L radius">
                                 <img alt="50x50" src="holder.js/50x50" class="img-circle"
                                      - style="border:1px solid #abcdef;">
                             </i>
+                            {% else %}
+                            <i class="avatar size-L radius">
+                                <img alt="50x50" src="holder.js/50x50" class="img-circle"
+                                     - style="border:1px solid #abcdef;">
+                            </i>
+                            {% endif %}
                         </a>
                         <div class="comment-main">
                             <header class="comment-header">
